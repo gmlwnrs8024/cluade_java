@@ -2,7 +2,7 @@ plugins {
     id 'application'
 }
 
-group = 'com.example'
+group = 'com.yettiesoft'
 version = '1.0-SNAPSHOT'
 
 java {
@@ -22,7 +22,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'com.example.App'
+    mainClass = 'com.yettiesoft.shop.ShopApplication'
 }
 
 tasks.withType(JavaCompile).configureEach {
