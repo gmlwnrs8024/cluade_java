@@ -7,10 +7,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.yettiesoft.shop.product.InMemoryProductRepository;
 
 class ShopServerTest {
 
@@ -19,7 +22,7 @@ class ShopServerTest {
 
     @BeforeEach
     void startServer() throws Exception {
-        server = new ShopServer(0);
+        server = new ShopServer(0, new InMemoryProductRepository(List.of()));
         server.start();
     }
 
