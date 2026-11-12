@@ -2,11 +2,19 @@ package com.yettiesoft.shop;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpServer;
+import com.yettiesoft.shop.member.MemberRepository;
+import com.yettiesoft.shop.member.MemberService;
 import com.yettiesoft.shop.product.ProductRepository;
 import com.yettiesoft.shop.web.HomeHandler;
+import com.yettiesoft.shop.web.LoginHandler;
+import com.yettiesoft.shop.web.LogoutHandler;
 import com.yettiesoft.shop.web.ProductHandler;
+import com.yettiesoft.shop.web.SessionManager;
+import com.yettiesoft.shop.web.SignUpHandler;
 
 /**
  * JDK에 내장된 HttpServer로 쇼핑몰 웹 서버를 띄운다.
@@ -15,13 +23,28 @@ import com.yettiesoft.shop.web.ProductHandler;
  */
 public class ShopServer {
 
+    private static final int THREADS = 10;
+
     private final HttpServer server;
+    private final ExecutorService executor;
 
     /** port에 0을 주면 비어 있는 포트를 자동으로 고른다(테스트용). */
-    public ShopServer(int port, ProductRepository productRepository) throws IOException {
+    public ShopServer(int port, ProductRepository productRepository, MemberRepository memberRepository)
+            throws IOException {
+        MemberService memberService = new MemberService(memberRepository);
+        SessionManager sessionManager = new SessionManager(memberRepository);
+
         server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new HomeHandler());
-        server.createContext("/products", new ProductHandler(productRepository));
+        server.createContext("/", new HomeHandler(sessionManager));
+        server.createContext("/products", new ProductHandler(productRepository, sessionManager));
+        server.createContext("/signup", new SignUpHandler(memberService, sessionManager));
+        server.createContext("/login", new LoginHandler(memberService, sessionManager));
+        server.createContext("/logout", new LogoutHandler(sessionManager));
+
+        // 기본값은 요청을 하나씩 차례로 처리한다. 로그인(비밀번호 확인)은 일부러 느리게 만든 계산이라
+        // 그동안 다른 사람의 요청이 모두 기다리지 않도록 여러 스레드에서 동시에 처리한다.
+        executor = Executors.newFixedThreadPool(THREADS);
+        server.setExecutor(executor);
     }
 
     public void start() {
@@ -30,6 +53,7 @@ public class ShopServer {
 
     public void stop() {
         server.stop(0);
+        executor.shutdown();
     }
 
     public int getPort() {

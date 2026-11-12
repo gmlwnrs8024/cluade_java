@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.yettiesoft.shop.member.InMemoryMemberRepository;
 import com.yettiesoft.shop.product.InMemoryProductRepository;
 
 class ShopServerTest {
@@ -22,7 +23,7 @@ class ShopServerTest {
 
     @BeforeEach
     void startServer() throws Exception {
-        server = new ShopServer(0, new InMemoryProductRepository(List.of()));
+        server = new ShopServer(0, new InMemoryProductRepository(List.of()), new InMemoryMemberRepository());
         server.start();
     }
 
