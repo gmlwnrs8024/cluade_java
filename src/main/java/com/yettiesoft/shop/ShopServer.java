@@ -5,16 +5,19 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.yettiesoft.shop.member.MemberRepository;
 import com.yettiesoft.shop.member.MemberService;
 import com.yettiesoft.shop.product.ProductRepository;
+import com.yettiesoft.shop.web.ErrorFilter;
 import com.yettiesoft.shop.web.HomeHandler;
 import com.yettiesoft.shop.web.LoginHandler;
 import com.yettiesoft.shop.web.LogoutHandler;
 import com.yettiesoft.shop.web.ProductHandler;
 import com.yettiesoft.shop.web.SessionManager;
 import com.yettiesoft.shop.web.SignUpHandler;
+import com.yettiesoft.shop.web.View;
 
 /**
  * JDK에 내장된 HttpServer로 쇼핑몰 웹 서버를 띄운다.
@@ -33,18 +36,24 @@ public class ShopServer {
             throws IOException {
         MemberService memberService = new MemberService(memberRepository);
         SessionManager sessionManager = new SessionManager(memberRepository);
+        View view = new View(sessionManager);
 
         server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new HomeHandler(sessionManager));
-        server.createContext("/products", new ProductHandler(productRepository, sessionManager));
-        server.createContext("/signup", new SignUpHandler(memberService, sessionManager));
-        server.createContext("/login", new LoginHandler(memberService, sessionManager));
-        server.createContext("/logout", new LogoutHandler(sessionManager));
+        addRoute("/", new HomeHandler(view));
+        addRoute("/products", new ProductHandler(productRepository, view));
+        addRoute("/signup", new SignUpHandler(memberService, view));
+        addRoute("/login", new LoginHandler(memberService, sessionManager, view));
+        addRoute("/logout", new LogoutHandler(sessionManager, view));
 
         // 기본값은 요청을 하나씩 차례로 처리한다. 로그인(비밀번호 확인)은 일부러 느리게 만든 계산이라
         // 그동안 다른 사람의 요청이 모두 기다리지 않도록 여러 스레드에서 동시에 처리한다.
         executor = Executors.newFixedThreadPool(THREADS);
         server.setExecutor(executor);
+    }
+
+    /** 주소와 핸들러를 연결하고, 오류 처리 필터를 앞에 붙인다. */
+    private void addRoute(String path, HttpHandler handler) {
+        server.createContext(path, handler).getFilters().add(new ErrorFilter());
     }
 
     public void start() {

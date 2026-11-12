@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('상품 목록')}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+
+<h1>상품 목록</h1>
+<ul>
+  <!--/* th:each: products의 상품마다 <li>를 하나씩 만든다. */-->
+  <li th:each="p : ${products}">
+    <!--/* |...| 안에서는 ${...} 자리에 값이 들어간다. 예: /products/3 */-->
+    <a th:href="|/products/${p.id()}|" th:text="${p.name()}">상품 이름</a>
+    <span class="price" th:text="${#numbers.formatInteger(p.price(), 1, 'COMMA') + '원'}">0원</span>
+  </li>
+</ul>
+</body>
+</html>

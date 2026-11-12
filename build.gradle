@@ -16,6 +16,11 @@ repositories {
 }
 
 dependencies {
+    // HTML 템플릿 엔진. 화면은 src/main/resources/templates/*.html 에 둔다.
+    implementation 'org.thymeleaf:thymeleaf:3.1.7.RELEASE'
+    // Thymeleaf가 로그를 남길 때 쓰는 구현체(설정: src/main/resources/simplelogger.properties)
+    runtimeOnly 'org.slf4j:slf4j-simple:2.0.20'
+
     testImplementation platform('org.junit:junit-bom:5.11.3')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

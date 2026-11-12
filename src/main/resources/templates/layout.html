@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--/* 모든 화면이 같이 쓰는 조각(fragment)들. 각 화면에서 th:replace로 불러온다. */-->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <title th:text="${title} + ' - 예티 쇼핑몰'">예티 쇼핑몰</title>
+  <style>
+    body { font-family: sans-serif; max-width: 720px; margin: 0 auto; padding: 0 16px; }
+    nav { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid #ddd; margin-bottom: 16px; }
+    nav .account { margin-left: auto; display: flex; gap: 12px; align-items: center; }
+    form.inline { display: inline; margin: 0; }
+    .price { font-weight: bold; }
+    .errors { color: #c00; }
+    .notice { color: #070; }
+    label { display: block; margin: 8px 0; }
+  </style>
+</head>
+
+<body>
+<nav th:fragment="nav">
+  <a href="/">홈</a><a href="/products">상품</a>
+  <span class="account">
+    <th:block th:if="${loginMember != null}">
+      <span th:text="${loginMember.name() + '님'}">홍길동님</span>
+      <form method="post" action="/logout" class="inline"><button>로그아웃</button></form>
+    </th:block>
+    <th:block th:if="${loginMember == null}">
+      <a href="/login">로그인</a><a href="/signup">회원가입</a>
+    </th:block>
+  </span>
+</nav>
+
+<!--/* 오류 메시지 목록. errors가 비어 있으면 아무것도 출력하지 않는다. */-->
+<ul th:fragment="errors(errors)" class="errors" th:if="${not #lists.isEmpty(errors)}">
+  <li th:each="error : ${errors}" th:text="${error}">오류 메시지</li>
+</ul>
+</body>
+</html>

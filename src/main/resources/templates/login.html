@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('로그인')}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+
+<h1>로그인</h1>
+<p class="notice" th:if="${joined}">회원가입이 완료되었습니다. 로그인해 주세요.</p>
+<ul th:replace="~{layout :: errors(${errors})}"></ul>
+<form method="post" action="/login">
+  <label>아이디 <input name="loginId" th:value="${loginId}" required></label>
+  <label>비밀번호 <input name="password" type="password" required></label>
+  <button>로그인</button>
+</form>
+<p>아직 회원이 아니신가요? <a href="/signup">회원가입</a></p>
+</body>
+</html>

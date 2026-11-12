@@ -75,12 +75,6 @@ class ProductHandlerTest {
         assertEquals(404, get(path).statusCode());
     }
 
-    @Test
-    void formatPriceUsesThousandsSeparator() {
-        assertEquals("289,000원", ProductHandler.formatPrice(289000));
-        assertEquals("0원", ProductHandler.formatPrice(0));
-    }
-
     private HttpResponse<String> get(String path) throws Exception {
         HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + server.getPort() + path)).build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());

@@ -12,15 +12,17 @@ import com.sun.net.httpserver.HttpHandler;
 public class LogoutHandler implements HttpHandler {
 
     private final SessionManager sessionManager;
+    private final View view;
 
-    public LogoutHandler(SessionManager sessionManager) {
+    public LogoutHandler(SessionManager sessionManager, View view) {
         this.sessionManager = sessionManager;
+        this.view = view;
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if (!exchange.getRequestURI().getPath().equals("/logout")) {
-            Html.sendNotFound(exchange, sessionManager.currentMember(exchange));
+            view.notFound(exchange);
             return;
         }
         if (!exchange.getRequestMethod().equals("POST")) {

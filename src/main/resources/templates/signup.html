@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('회원가입')}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+
+<h1>회원가입</h1>
+<ul th:replace="~{layout :: errors(${errors})}"></ul>
+<form method="post" action="/signup">
+  <!--/* 실패해서 다시 보여줄 때 입력했던 값을 채워 둔다. 비밀번호는 다시 채우지 않는다. */-->
+  <label>아이디 <input name="loginId" th:value="${loginId}" required></label>
+  <label>비밀번호 <input name="password" type="password" required></label>
+  <label>이름 <input name="name" th:value="${name}" required></label>
+  <button>가입하기</button>
+</form>
+</body>
+</html>
