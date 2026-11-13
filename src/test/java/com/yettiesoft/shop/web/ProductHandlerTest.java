@@ -17,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.yettiesoft.shop.ShopServer;
+import com.yettiesoft.shop.cart.InMemoryCartRepository;
 import com.yettiesoft.shop.member.InMemoryMemberRepository;
 import com.yettiesoft.shop.product.InMemoryProductRepository;
 import com.yettiesoft.shop.product.Product;
@@ -31,7 +32,7 @@ class ProductHandlerTest {
         server = new ShopServer(0, new InMemoryProductRepository(List.of(
                 new Product(1, "무선 키보드", 39000, "조용한 키보드"),
                 new Product(2, "<script>alert(1)</script>", 1000, "a & b"))),
-                new InMemoryMemberRepository());
+                new InMemoryMemberRepository(), new InMemoryCartRepository());
         server.start();
     }
 

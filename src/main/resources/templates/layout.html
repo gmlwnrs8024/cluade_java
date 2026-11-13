@@ -14,6 +14,10 @@
     .errors { color: #c00; }
     .notice { color: #070; }
     label { display: block; margin: 8px 0; }
+    table.cart { width: 100%; border-collapse: collapse; }
+    table.cart th, table.cart td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+    table.cart .num { text-align: right; }
+    input.qty { width: 4em; }
   </style>
 </head>
 
@@ -22,6 +26,7 @@
   <a href="/">홈</a><a href="/products">상품</a>
   <span class="account">
     <th:block th:if="${loginMember != null}">
+      <a href="/cart" th:text="|장바구니 (${cartCount})|">장바구니 (0)</a>
       <span th:text="${loginMember.name() + '님'}">홍길동님</span>
       <form method="post" action="/logout" class="inline"><button>로그아웃</button></form>
     </th:block>

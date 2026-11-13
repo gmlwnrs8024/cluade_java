@@ -7,6 +7,12 @@
 <h1 th:text="${product.name()}">상품 이름</h1>
 <p class="price" th:text="${#numbers.formatInteger(product.price(), 1, 'COMMA') + '원'}">0원</p>
 <p th:text="${product.description()}">상품 설명</p>
+<!--/* 로그인하지 않았으면 담기를 눌렀을 때 로그인 화면으로 갔다가 이 화면으로 돌아온다. */-->
+<form method="post" action="/cart/add">
+  <input type="hidden" name="productId" th:value="${product.id()}">
+  <label>수량 <input type="number" name="quantity" value="1" min="1" max="99" class="qty"></label>
+  <button>장바구니 담기</button>
+</form>
 <p><a href="/products">목록으로</a></p>
 </body>
 </html>

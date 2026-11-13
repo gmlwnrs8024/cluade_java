@@ -8,6 +8,8 @@
 <p class="notice" th:if="${joined}">회원가입이 완료되었습니다. 로그인해 주세요.</p>
 <ul th:replace="~{layout :: errors(${errors})}"></ul>
 <form method="post" action="/login">
+  <!--/* 로그인 후 돌아갈 주소. 화면에는 보이지 않고 폼과 함께 전송된다. */-->
+  <input type="hidden" name="next" th:value="${next}">
   <label>아이디 <input name="loginId" th:value="${loginId}" required></label>
   <label>비밀번호 <input name="password" type="password" required></label>
   <button>로그인</button>

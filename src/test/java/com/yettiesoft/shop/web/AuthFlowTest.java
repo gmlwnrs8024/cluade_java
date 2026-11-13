@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.yettiesoft.shop.ShopServer;
+import com.yettiesoft.shop.cart.InMemoryCartRepository;
 import com.yettiesoft.shop.member.InMemoryMemberRepository;
 import com.yettiesoft.shop.product.InMemoryProductRepository;
 
@@ -31,7 +32,7 @@ class AuthFlowTest {
 
     @BeforeEach
     void startServer() throws Exception {
-        server = new ShopServer(0, new InMemoryProductRepository(List.of()), new InMemoryMemberRepository());
+        server = new ShopServer(0, new InMemoryProductRepository(List.of()), new InMemoryMemberRepository(), new InMemoryCartRepository());
         server.start();
     }
 

@@ -29,8 +29,19 @@ public final class Requests {
         try (InputStream in = exchange.getRequestBody()) {
             body = new String(in.readNBytes(MAX_FORM_BYTES), StandardCharsets.UTF_8);
         }
+        return parseUrlEncoded(body);
+    }
+
+    /** 주소의 ? 뒤 값(쿼리 문자열)을 읽는다. 예: /login?joined&next=%2Fcart → {joined="", next="/cart"} */
+    public static Map<String, String> readQuery(HttpExchange exchange) {
+        String query = exchange.getRequestURI().getRawQuery();
+        return query == null ? Map.of() : parseUrlEncoded(query);
+    }
+
+    /** 폼 본문과 쿼리 문자열은 형식이 같다: "키=값&키=값", 특수문자는 %XX로 바뀌어 있다. */
+    private static Map<String, String> parseUrlEncoded(String text) {
         Map<String, String> form = new HashMap<>();
-        for (String pair : body.split("&")) {
+        for (String pair : text.split("&")) {
             if (pair.isEmpty()) {
                 continue;
             }

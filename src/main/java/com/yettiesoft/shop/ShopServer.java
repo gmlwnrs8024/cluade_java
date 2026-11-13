@@ -7,9 +7,12 @@ import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import com.yettiesoft.shop.cart.CartRepository;
+import com.yettiesoft.shop.cart.CartService;
 import com.yettiesoft.shop.member.MemberRepository;
 import com.yettiesoft.shop.member.MemberService;
 import com.yettiesoft.shop.product.ProductRepository;
+import com.yettiesoft.shop.web.CartHandler;
 import com.yettiesoft.shop.web.ErrorFilter;
 import com.yettiesoft.shop.web.HomeHandler;
 import com.yettiesoft.shop.web.LoginHandler;
@@ -32,11 +35,12 @@ public class ShopServer {
     private final ExecutorService executor;
 
     /** port에 0을 주면 비어 있는 포트를 자동으로 고른다(테스트용). */
-    public ShopServer(int port, ProductRepository productRepository, MemberRepository memberRepository)
-            throws IOException {
+    public ShopServer(int port, ProductRepository productRepository, MemberRepository memberRepository,
+            CartRepository cartRepository) throws IOException {
         MemberService memberService = new MemberService(memberRepository);
+        CartService cartService = new CartService(cartRepository, productRepository);
         SessionManager sessionManager = new SessionManager(memberRepository);
-        View view = new View(sessionManager);
+        View view = new View(sessionManager, cartService);
 
         server = HttpServer.create(new InetSocketAddress(port), 0);
         addRoute("/", new HomeHandler(view));
@@ -44,6 +48,7 @@ public class ShopServer {
         addRoute("/signup", new SignUpHandler(memberService, view));
         addRoute("/login", new LoginHandler(memberService, sessionManager, view));
         addRoute("/logout", new LogoutHandler(sessionManager, view));
+        addRoute("/cart", new CartHandler(cartService, sessionManager, view));
 
         // 기본값은 요청을 하나씩 차례로 처리한다. 로그인(비밀번호 확인)은 일부러 느리게 만든 계산이라
         // 그동안 다른 사람의 요청이 모두 기다리지 않도록 여러 스레드에서 동시에 처리한다.
